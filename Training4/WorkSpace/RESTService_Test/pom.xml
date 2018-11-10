@@ -22,6 +22,15 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
+		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+		<sonar.jacoco.version>0.8.2</sonar.jacoco.version>
+		<sonar.exclusions>
+			src/main/java/com/sever/demo/RestServiceTestApplication.java,
+			src/main/java/com/sever/demo/controller/ProductController.java,
+			src/main/java/com/sever/demo/model/ProductModel.java,
+			src/main/java/com/sever/demo/repository/ProductRepository.java
+		</sonar.exclusions>
+		
 	</properties>
 
 	<dependencies>
@@ -52,24 +61,50 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>${sonar.jacoco.vesion}</version>
+				<executions>
+					<execution>
+						<id>agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<configuration>
+					<encoding>UTF-8</encoding>
+				</configuration>
+				<executions>
+					<execution>
+						<id>integration-test</id>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
 		</plugins>
 	</build>
 	
-	<profiles>
+	<!-- <profiles>
 		<profile>
 			<id>sonar</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
-				<!-- Optional URL to server. Default value is http://localhost:9000 -->
+				Optional URL to server. Default value is http://localhost:9000
 				<sonar.host.url>
 					http://localhost:8080
 				</sonar.host.url>
 			</properties>
 		</profile>
-	</profiles>
+	</profiles> -->
 
 
 </project>
