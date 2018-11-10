@@ -1,9 +1,7 @@
 package com.sever.demo.controller;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -31,9 +29,6 @@ public class ProductController {
 	public ProductController(ProductRepository productRepository) {
 		this.productRepository = productRepository;
 	}
-
-	
-	
 	
 	/**
 	 * Devuelte la lista de todos los productos creados
@@ -42,11 +37,11 @@ public class ProductController {
 	@GetMapping("/list")
 	@ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<ProductModel>> listAllProducts() {
-		List<ProductModel>  productos = productRepository.findAll();
+		List<ProductModel>  productos = new ArrayList<>();
+		productos = productRepository.findAll();
 		if (productos.isEmpty()) {
-			return new ResponseEntity(HttpStatus.NO_CONTENT);
+			return new ResponseEntity<List<ProductModel>>(productos,HttpStatus.NO_CONTENT);
         }else {
-        	//.stream().collect(Collectors.toList())
         	return new ResponseEntity<List<ProductModel>>(productos, HttpStatus.OK);
         }
     }
@@ -59,14 +54,12 @@ public class ProductController {
 	 */
 	@PostMapping("/add")
 	@ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> addProducts(@RequestBody ProductModel product, UriComponentsBuilder ucBuilder) {
+    public ResponseEntity<?> addProduct(@RequestBody ProductModel product, UriComponentsBuilder ucBuilder) {
        
 		if(productRepository.findByCode(product.getCode()) != null) {
-			//new Error("El producto " + product.getName() + " ya existe.","","",""),
-            return new ResponseEntity(HttpStatus.CONFLICT);
+            return new ResponseEntity<String>("",HttpStatus.CONFLICT);
         }
-    	productRepository.save(new ProductModel(product.getCode(),product.getName(),product.getDescription(),product.getPrice()));
-        
+    	productRepository.save(product);
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(ucBuilder.path("/resume/{code}").buildAndExpand(product.getCode()).toUri());
         return new ResponseEntity<String>(headers, HttpStatus.CREATED);
@@ -77,15 +70,14 @@ public class ProductController {
 	 * @param id
 	 * @return
 	 */
-	@RequestMapping(value = "/remove/{id}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/remove/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> deleteProduct(@PathVariable("id") String id) {
-		ProductModel product = productRepository.findByCode(id);
-        if (product == null) {
-        	//new Error("No se puede borrar el producto "+id,"","",""),
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+		ProductModel product = productRepository.deleteByCode(id);
+		if (product == null) {
+            return new ResponseEntity<ProductModel>(HttpStatus.NOT_FOUND);
+        }else {
+        	return new ResponseEntity<ProductModel>(HttpStatus.NO_CONTENT);
         }
-        productRepository.delete(productRepository.findByCode(id));
-        return new ResponseEntity<ProductModel>(HttpStatus.NO_CONTENT);
     }
 	
 	/**
@@ -97,9 +89,9 @@ public class ProductController {
     public ResponseEntity<?> getProduct(@PathVariable("id") String id) {
 		ProductModel product = productRepository.findByCode(id);
         if (product == null) {
-        	//new Error("El producto " + id + " no existe.","","",""),
-        	return new ResponseEntity(HttpStatus.CONFLICT);
-            }
-        return new ResponseEntity<ProductModel>(product, HttpStatus.OK);
+        	return new ResponseEntity<ProductModel>(HttpStatus.CONFLICT);
+        }else {
+        	return new ResponseEntity<ProductModel>(product, HttpStatus.OK);
+        }
     }
 }

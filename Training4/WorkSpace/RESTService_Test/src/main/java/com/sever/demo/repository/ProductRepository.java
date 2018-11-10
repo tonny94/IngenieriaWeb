@@ -9,4 +9,5 @@ import com.sever.demo.model.ProductModel;
 public interface ProductRepository extends CrudRepository<ProductModel,String>{
 	List<ProductModel> findAll();
 	ProductModel findByCode(String code);
+	ProductModel deleteByCode(String code);
 }

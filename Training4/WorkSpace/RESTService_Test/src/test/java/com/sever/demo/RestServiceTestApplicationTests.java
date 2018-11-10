@@ -5,8 +5,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.hibernate.validator.internal.util.privilegedactions.NewProxyInstance;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,13 +15,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 import com.sever.demo.controller.ProductController;
 import com.sever.demo.model.ProductModel;
 import com.sever.demo.repository.ProductRepository;
-
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -41,13 +35,6 @@ public class RestServiceTestApplicationTests {
 	public void setUp() {
 		product1 = new ProductModel("A12","Coca-cola","bebida",1);
 		product2 = new ProductModel("B12","Pepsi","bebida",2);
-		
-//		if(productRepository.findByCode("A12") == null) {
-//			productRepository.save(product1);
-//		} else if(productRepository.findByCode("B12") == null){
-//			productRepository.save(product2);
-//		}
-		
 		productController = new ProductController(productRepository);
 	}
 	
@@ -60,7 +47,7 @@ public class RestServiceTestApplicationTests {
 		
 		ResponseEntity<List<ProductModel>> esperado = new ResponseEntity<List<ProductModel>>(listRespuesta, HttpStatus.OK);
 		
-		when(productRepository.findAll()).thenReturn(listRespuesta);// .thenReturn(esperado);
+		when(productRepository.findAll()).thenReturn(listRespuesta);
 		ResponseEntity<List<ProductModel>> resultado = productController.listAllProducts();
 		Assert.assertEquals(esperado, resultado);
 		
