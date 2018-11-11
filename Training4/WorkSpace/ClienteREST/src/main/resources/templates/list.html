@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Product List</title>
+<link rel="stylesheet" type="text/css" href="estilo.css">
+</head>
+<body>
+	<h3>Product List</h3>
+	<hr>
+	<div th:each="prod : ${productos}">
+		<span>
+			<a id="prod" th:href="@{/show/{id}/(id=${prod.code})}"th:text="${prod.name}"></a>
+			<a id="remove" th:href="@{/remove/{id}/(id=${prod.code})}" role="button" class="buttonR">Remove</a>
+			<a id="modify" th:href="@{/modifyForm/{id}/(id=${prod.code})}" role="button" class="buttonY">Modify</a>
+		</span>
+		<br>
+	</div>
+	<br>
+	<a id="return" th:href="@{/}" role="button" class="buttonB">Return</a>
+	<footer>
+		<a th:href="@{/logout}" role="button" class="buttonR">&#10006;
+			Cerrar Sesion</a>
+	</footer>
+</body>
+</html>

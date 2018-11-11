@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Modify Form</title>
+<link rel="stylesheet" type="text/css" href="estilo.css">
+</head>
+<body>
+	<h1>Modify Product</h1>
+	<hr>
+	<form action="/spring-mvc-java/modify" th:action="@{/modify}"
+		th:object="${product}" method="post" modelAttribute="product">
+		<p>
+			Code: <input type="text" th:field="*{code}" th:value="${oldprod.code}" />
+		</p>
+		<p>
+			Name: <input type="text" th:field="*{name}" th:value="${oldprod.name}" />
+		</p>
+		<p>
+			Description: <input type="text" th:field="*{description}" th:value="${oldprod.description}" />
+		</p>
+		<p>
+			Price: <input type="text" th:field="*{price}" th:value="${oldprod.price}" />
+		</p>
+		<br>
+		<p>
+			<input type="submit" value="Submit" role="button" class="buttonV" />
+			<input type="reset" value="Clear All" role="button" class="buttonY" />
+		</p>
+	</form>
+	<br>
+	<a th:href="@{/list}" role="button" class="buttonB">Return</a>
+	<footer>
+		<a th:href="@{/logout}" role="button" class="buttonR">&#10006;
+			Cerrar Sesion</a>
+	</footer>
+</body>
+</html>
