@@ -56,6 +56,9 @@ public class RestServiceTestApplicationTests {
 	}
 	
 	@Test
+	public void listAllProducts_KO() {}
+	
+	@Test
 	public void addProduct_OK() {
 
 		ProductModel nuevoProducto = new ProductModel("C123","platano","1kg de fruta",2);
@@ -75,6 +78,9 @@ public class RestServiceTestApplicationTests {
 		
 	}
 	
+	@Test
+	public void addProduct_KO() {}
+	
 	
 	@Test
 	public void deleteProduct_OK() {
@@ -90,6 +96,9 @@ public class RestServiceTestApplicationTests {
 	}
 	
 	@Test
+	public void deleteProduct_KO() {}
+	
+	@Test
 	public void getProduct_OK() {
 		
 		ResponseEntity<?> esperado = new ResponseEntity<ProductModel>(product1, HttpStatus.OK);
@@ -100,6 +109,15 @@ public class RestServiceTestApplicationTests {
 		
 		verify(productRepository,times(1)).findByCode("A12");
 	}
+	
+	@Test
+	public void getProduct_KO() {}
+	
+	@Test
+	public void modifyProduct_OK() {}
+	
+	@Test
+	public void modifyProduct_KO() {}
 	
 	
 }
