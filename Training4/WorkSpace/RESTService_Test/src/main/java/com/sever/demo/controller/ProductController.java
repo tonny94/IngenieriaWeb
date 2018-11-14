@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -58,11 +59,13 @@ public class ProductController {
        
 		if(productRepository.findByCode(product.getCode()) != null) {
             return new ResponseEntity<String>("",HttpStatus.CONFLICT);
+        }else {
+        	productRepository.save(product);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setLocation(ucBuilder.path("/resume/{code}").buildAndExpand(product.getCode()).toUri());
+            return new ResponseEntity<String>(headers, HttpStatus.CREATED);
         }
-    	productRepository.save(product);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(ucBuilder.path("/resume/{code}").buildAndExpand(product.getCode()).toUri());
-        return new ResponseEntity<String>(headers, HttpStatus.CREATED);
+    	
     }
 	
 	/**
@@ -87,6 +90,7 @@ public class ProductController {
 	 */
 	@RequestMapping(value = "/show/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> getProduct(@PathVariable("id") String id) {
+		
 		ProductModel product = productRepository.findByCode(id);
         if (product == null) {
         	return new ResponseEntity<ProductModel>(HttpStatus.CONFLICT);
@@ -94,4 +98,28 @@ public class ProductController {
         	return new ResponseEntity<ProductModel>(product, HttpStatus.OK);
         }
     }
+
+	/**
+	 * Actualiza un producto existente
+	 * @param product
+	 * @param ucBuilder
+	 * @return
+	 */
+	@PutMapping("/modify")
+	@ResponseStatus(HttpStatus.CREATED)
+	public ResponseEntity<?> modifyProducts(@RequestBody ProductModel product, UriComponentsBuilder ucBuilder) {
+		
+		if (productRepository.findByCode(product.getCode()) == null) {
+            return new ResponseEntity<ProductModel>(HttpStatus.NOT_FOUND);
+        }
+        else{
+        	productRepository.delete(productRepository.findByCode(product.getCode()));
+        	productRepository.save(product);
+        	HttpHeaders headers = new HttpHeaders();
+    		headers.setLocation(ucBuilder.path("/resume/{code}").buildAndExpand(product.getCode()).toUri());
+    		return new ResponseEntity<String>(headers, HttpStatus.CREATED);
+    	
+		}
+	}
+	
 }

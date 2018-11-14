@@ -38,7 +38,6 @@ public class RestServiceTestApplicationTests {
 		productController = new ProductController(productRepository);
 	}
 	
-	
 	@Test
 	public void listAllProducts_OK() {
 		List<ProductModel> listRespuesta = new ArrayList<>();
@@ -56,7 +55,17 @@ public class RestServiceTestApplicationTests {
 	}
 	
 	@Test
-	public void listAllProducts_KO() {}
+	public void listAllProducts_KO() {
+		List<ProductModel> listRespuesta = new ArrayList<>();
+		
+		ResponseEntity<List<ProductModel>> esperado = new ResponseEntity<List<ProductModel>>(listRespuesta, HttpStatus.NO_CONTENT);
+		
+		when(productRepository.findAll()).thenReturn(listRespuesta);
+		ResponseEntity<List<ProductModel>> resultado = productController.listAllProducts();
+		Assert.assertEquals(esperado, resultado);
+		
+		verify(productRepository,times(1)).findAll();
+	}
 	
 	@Test
 	public void addProduct_OK() {
@@ -69,18 +78,27 @@ public class RestServiceTestApplicationTests {
 		header.setLocation(builderEsperado.path("/resume/{code}").buildAndExpand(nuevoProducto.getCode()).toUri());
 		ResponseEntity<?> esperado = new ResponseEntity<String>(header, HttpStatus.CREATED);
 		
+		when(productRepository.findByCode(nuevoProducto.getCode())).thenReturn(null);
 		when(productRepository.save(nuevoProducto)).thenReturn(nuevoProducto);
 		
 		ResponseEntity<?> resultado = productController.addProduct(nuevoProducto,builder);
 		Assert.assertEquals(esperado, resultado);
 		
 		verify(productRepository,times(1)).save(nuevoProducto);
-		
 	}
 	
 	@Test
-	public void addProduct_KO() {}
-	
+	public void addProduct_KO() {
+		
+		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8080");
+		ResponseEntity<String> esperado = new ResponseEntity<String>("", HttpStatus.CONFLICT);
+		
+		when(productRepository.findByCode(product1.getCode())).thenReturn(product1);
+		
+		ResponseEntity<?> resultado = productController.addProduct(product1,builder);
+		Assert.assertEquals(esperado, resultado);
+		verify(productRepository,times(1)).findByCode(product1.getCode());
+	}
 	
 	@Test
 	public void deleteProduct_OK() {
@@ -96,7 +114,16 @@ public class RestServiceTestApplicationTests {
 	}
 	
 	@Test
-	public void deleteProduct_KO() {}
+	public void deleteProduct_KO() {
+		
+		ResponseEntity<ProductModel> esperado = new ResponseEntity<ProductModel>(HttpStatus.NOT_FOUND);
+		when(productRepository.deleteByCode("D12")).thenReturn(null);
+		
+		ResponseEntity<?> resultado = productController.deleteProduct("D12");
+		Assert.assertEquals(esperado, resultado);
+		
+		verify(productRepository,times(1)).deleteByCode("D12");
+	}
 	
 	@Test
 	public void getProduct_OK() {
@@ -111,10 +138,41 @@ public class RestServiceTestApplicationTests {
 	}
 	
 	@Test
-	public void getProduct_KO() {}
+	public void getProduct_KO() {
+		
+		ProductModel product = null;
+		ResponseEntity<?> esperado = new ResponseEntity<ProductModel>(HttpStatus.CONFLICT);
+		when(productRepository.findByCode("D12")).thenReturn(product);
+		
+		ResponseEntity<?> resultado = productController.getProduct("D12");
+		Assert.assertEquals(esperado, resultado);
+		
+		verify(productRepository,times(1)).findByCode("D12");
+	}
 	
 	@Test
-	public void modifyProduct_OK() {}
+	public void modifyProduct_OK() {
+		
+		ProductModel nuevoProducto = new ProductModel("A12","platano","4kg de fruta",4);
+		UriComponentsBuilder builderEsperado = UriComponentsBuilder.fromUriString("http://localhost:8080");
+		
+		HttpHeaders header = new HttpHeaders();
+		header.setLocation(builderEsperado.path("/resume/{code}").buildAndExpand(nuevoProducto.getCode()).toUri());
+		ResponseEntity<?> esperado = new ResponseEntity<String>(header, HttpStatus.CREATED);
+		
+		when(productRepository.findByCode(product1.getCode())).thenReturn(product1);
+		
+//		when(productRepository.deleteByCode(product1.getCode())).thenReturn(product1);
+//		when(productRepository.save(nuevoProducto)).thenReturn(nuevoProducto);
+		
+		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8080");
+		ResponseEntity<?> resultado = productController.modifyProducts(product1,builder);
+		Assert.assertEquals(esperado, resultado);
+		
+		verify(productRepository,times(1)).findByCode(product1.getCode());
+//		verify(productRepository,times(1)).deleteByCode(product1.getCode());
+		
+	}
 	
 	@Test
 	public void modifyProduct_KO() {}
