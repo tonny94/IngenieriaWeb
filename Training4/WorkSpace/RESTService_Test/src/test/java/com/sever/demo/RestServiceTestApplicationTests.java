@@ -161,21 +161,27 @@ public class RestServiceTestApplicationTests {
 		ResponseEntity<?> esperado = new ResponseEntity<String>(header, HttpStatus.CREATED);
 		
 		when(productRepository.findByCode(product1.getCode())).thenReturn(product1);
-		
-//		when(productRepository.deleteByCode(product1.getCode())).thenReturn(product1);
-//		when(productRepository.save(nuevoProducto)).thenReturn(nuevoProducto);
-		
 		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8080");
 		ResponseEntity<?> resultado = productController.modifyProducts(product1,builder);
 		Assert.assertEquals(esperado, resultado);
 		
-		verify(productRepository,times(1)).findByCode(product1.getCode());
-//		verify(productRepository,times(1)).deleteByCode(product1.getCode());
+		verify(productRepository,times(2)).findByCode(product1.getCode());
 		
 	}
 	
 	@Test
-	public void modifyProduct_KO() {}
+	public void modifyProduct_KO() {
+		ProductModel nuevoProducto = new ProductModel("D12","platano","4kg de fruta",4);
+		ResponseEntity<?> esperado = new ResponseEntity<ProductModel>(HttpStatus.NOT_FOUND);
+		
+		when(productRepository.findByCode(nuevoProducto.getCode())).thenReturn(null);
+		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8080");
+		ResponseEntity<?> resultado = productController.modifyProducts(nuevoProducto,builder);
+		Assert.assertEquals(esperado, resultado);
+		
+		verify(productRepository,times(1)).findByCode(nuevoProducto.getCode());
+		
+	}
 	
 	
 }
