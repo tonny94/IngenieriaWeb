@@ -1,11 +1,11 @@
-package com.example.training3.Configurations;
+package com.example.training3.configurations;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
-import com.example.training3.Components.CustomAuthenticationProvider;
+import com.example.training3.components.CustomAuthenticationProvider;
 
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Autowired

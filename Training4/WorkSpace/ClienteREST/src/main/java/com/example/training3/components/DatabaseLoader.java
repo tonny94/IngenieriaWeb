@@ -1,12 +1,12 @@
-package com.example.training3.Components;
+package com.example.training3.components;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import com.example.training3.Models.User;
-import com.example.training3.Repositories.UserRepository;
+import com.example.training3.models.User;
+import com.example.training3.repositories.UserRepository;
 
 import java.util.Arrays;
 import java.util.List;

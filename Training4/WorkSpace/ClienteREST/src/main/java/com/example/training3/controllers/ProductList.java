@@ -1,4 +1,4 @@
-package com.example.training3.Controllers;
+package com.example.training3.controllers;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 
-import com.example.training3.Models.Error;
-import com.example.training3.Models.Product;
+import com.example.training3.models.Error;
+import com.example.training3.models.Product;
 
 @Controller
 public class ProductList {

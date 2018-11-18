@@ -1,4 +1,4 @@
-package com.example.training3.Models;
+package com.example.training3.models;
 
 public class Error {
 	private String msg;

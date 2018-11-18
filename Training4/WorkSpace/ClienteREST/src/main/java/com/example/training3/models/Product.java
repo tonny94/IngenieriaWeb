@@ -1,4 +1,4 @@
-package com.example.training3.Models;
+package com.example.training3.models;
 
 public class Product {
 	private String code;
