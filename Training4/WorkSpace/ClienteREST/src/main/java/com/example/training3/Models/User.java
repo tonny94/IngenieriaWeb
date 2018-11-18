@@ -10,14 +10,13 @@ import javax.persistence.Id;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Entity
 public class User implements UserDetailsService {
 	@Id
 	private String nombre;
-	private String contraseña;
+	private String password;
 	@ElementCollection(fetch = FetchType.EAGER)
 	private List<GrantedAuthority> roles;
 	
@@ -25,7 +24,7 @@ public class User implements UserDetailsService {
 	
 	public User(String name, String pass, List<GrantedAuthority> roles) {
 		this.nombre = name;
-		this.contraseña = new BCryptPasswordEncoder().encode(pass);
+		this.password = new BCryptPasswordEncoder().encode(pass);
 		this.roles = roles;
 	}
 
@@ -37,12 +36,12 @@ public class User implements UserDetailsService {
 		this.nombre = nombre;
 	}
 
-	public String getContraseña() {
-		return contraseña;
+	public String getPassword() {
+		return password;
 	}
 
-	public void setContraseña(String contraseña) {
-		this.contraseña = contraseña;
+	public void setPassword(String pass) {
+		this.password = pass;
 	}
 
 	public List<GrantedAuthority> getRoles() {
@@ -54,8 +53,7 @@ public class User implements UserDetailsService {
 	}
 	
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		// TODO Auto-generated method stub
+	public UserDetails loadUserByUsername(String username) {
 		return null;
 	}
 }

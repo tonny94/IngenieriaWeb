@@ -1,4 +1,4 @@
-package com.example.training3.components;
+package com.example.training3.Components;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -8,8 +8,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import com.example.training3.models.User;
-import com.example.training3.repositories.UserRepository;
+import com.example.training3.Models.User;
+import com.example.training3.Repositories.UserRepository;
 
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider{

@@ -1,6 +1,5 @@
 package com.example.training3.Controllers;
 
-import java.io.IOException;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,11 +13,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.client.RestTemplate;
-import com.example.training3.Models.Product;
+
 import com.example.training3.Models.Error;
+import com.example.training3.Models.Product;
 
 @Controller
 public class ProductList {
@@ -40,7 +41,7 @@ public class ProductList {
 	
 	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@GetMapping("/list")
-	public String list(Model model) throws IOException {
+	public String list(Model model) {
 		@SuppressWarnings("unchecked")
 		List<Product> productos = restTemplate.getForObject(restServerUrl + "list",List.class);
         model.addAttribute("productos", productos);
@@ -69,7 +70,7 @@ public class ProductList {
 	}
 	
 	@Secured({"ROLE_ADMIN"})
-	@RequestMapping(value = "/add", method = RequestMethod.POST)
+	@PostMapping(value = "/add")
 	public String newProd(@ModelAttribute("product") Product product,BindingResult result, ModelMap model) {
 		if(product != null) {
 			model.addAttribute("code", product.getCode());
@@ -94,7 +95,7 @@ public class ProductList {
 	}
 	
 	@Secured({"ROLE_ADMIN"})
-	@RequestMapping(value = "/modify", method = RequestMethod.PUT)
+	@PutMapping(value = "/modify")
 	public String modifyProd(@ModelAttribute("product") Product product,BindingResult result, ModelMap model) {
 		if(product != null) {
 			model.addAttribute("code", product.getCode());

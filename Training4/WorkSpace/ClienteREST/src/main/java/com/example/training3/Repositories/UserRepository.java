@@ -1,7 +1,6 @@
 package com.example.training3.Repositories;
 
 import java.util.List;
-
 import org.springframework.data.repository.CrudRepository;
 import com.example.training3.Models.User;
 
