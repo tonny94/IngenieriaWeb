@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -24,6 +22,7 @@ import com.sever.demo.repository.ProductRepository;
 
 @RestController
 public class ProductController {
+	private static final String NOT_EXITS = "El producto no existe.";
 	
 	private ProductRepository productRepository;
 	
@@ -57,7 +56,7 @@ public class ProductController {
 	 */
 	@PostMapping("/add")
 	@ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> addProduct(@RequestBody ProductModel product, UriComponentsBuilder ucBuilder) throws ProductException {
+    public ResponseEntity<String> addProduct(@RequestBody ProductModel product, UriComponentsBuilder ucBuilder) throws ProductException {
        
 		if(productRepository.findByCode(product.getCode()) != null) {
             throw new ProductException(1,"El producto ya existe.");
@@ -76,12 +75,12 @@ public class ProductController {
 	 * @return
 	 * @throws ProductException 
 	 */
-	@RequestMapping(value = "/remove/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> deleteProduct(@PathVariable("id") String id) throws ProductException {
+	@GetMapping("/remove/{id}")
+    public ResponseEntity<ProductModel> deleteProduct(@PathVariable("id") String id) throws ProductException {
 		
 		ProductModel product = productRepository.deleteByCode(id);
 		if (product == null) {
-			throw new ProductException(2,"El producto no existe.");
+			throw new ProductException(2,NOT_EXITS);
         }else {
         	return new ResponseEntity<ProductModel>(HttpStatus.NO_CONTENT);
         }
@@ -93,12 +92,12 @@ public class ProductController {
 	 * @return
 	 * @throws ProductException 
 	 */
-	@RequestMapping(value = "/show/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> getProduct(@PathVariable("id") String id) throws ProductException {
+	@GetMapping("/show/{id}")
+    public ResponseEntity<ProductModel> getProduct(@PathVariable("id") String id) throws ProductException {
 		
 		ProductModel product = productRepository.findByCode(id);
         if (product == null) {
-        	throw new ProductException(2,"El producto no existe.");
+        	throw new ProductException(2,NOT_EXITS);
         }else {
         	return new ResponseEntity<ProductModel>(product, HttpStatus.OK);
         }
@@ -113,10 +112,10 @@ public class ProductController {
 	 */
 	@PutMapping("/modify")
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<?> modifyProducts(@RequestBody ProductModel product, UriComponentsBuilder ucBuilder) throws ProductException {
+	public ResponseEntity<String> modifyProducts(@RequestBody ProductModel product, UriComponentsBuilder ucBuilder) throws ProductException {
 		
 		if (productRepository.findByCode(product.getCode()) == null) {
-			throw new ProductException(2,"El producto no existe.");
+			throw new ProductException(2,NOT_EXITS);
 		}
         else{
         	productRepository.delete(productRepository.findByCode(product.getCode()));

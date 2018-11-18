@@ -1,5 +1,7 @@
 package com.sever.demo.controller;
 
+import java.io.IOException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -12,7 +14,7 @@ import com.sever.demo.model.ProductException;
 public class ErrorHandlingController {
 	
 	@ExceptionHandler(Exception.class)
-	public ResponseEntity<ExceptionResponse> generalException(Exception e) throws Exception{
+	public ResponseEntity<ExceptionResponse> generalException(Exception e) throws IOException{
 		
 		ExceptionResponse response = new ExceptionResponse();
 		response.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
