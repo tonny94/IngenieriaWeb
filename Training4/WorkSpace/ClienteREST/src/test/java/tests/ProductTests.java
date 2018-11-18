@@ -13,6 +13,7 @@ import environment.EnvironmentManager;
 import environment.RunEnvironment;
 import junit.framework.Assert;
 
+@SuppressWarnings("deprecation")
 public class ProductTests {
 	@Before
     public void startBrowser() {
@@ -53,7 +54,7 @@ public class ProductTests {
         List<WebElement> elementsnew = driver.findElements(By.id("modify"));
         
         Assert.assertEquals("http://localhost:8081/list",driver.getCurrentUrl());
-        Assert.assertTrue(elements.size() ==  elementsnew.size() );
+        Assert.assertTrue(elements.size() ==  elementsnew.size());
     }
     
     @Test

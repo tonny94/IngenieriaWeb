@@ -10,20 +10,20 @@
 	<form action="/spring-mvc-java/modify" th:action="@{/modify}"
 		th:object="${product}" method="post" modelAttribute="product">
 		<p>
-			Code: <input type="text" th:field="*{code}" th:value="${oldprod.code}" />
+			Code: <input id="code" type="text" th:field="*{code}" th:value="${oldprod.code}" />
 		</p>
 		<p>
-			Name: <input type="text" th:field="*{name}" th:value="${oldprod.name}" />
+			Name: <input id="name" type="text" th:field="*{name}" th:value="${oldprod.name}" />
 		</p>
 		<p>
-			Description: <input type="text" th:field="*{description}" th:value="${oldprod.description}" />
+			Description: <input id="description" type="text" th:field="*{description}" th:value="${oldprod.description}" />
 		</p>
 		<p>
-			Price: <input type="text" th:field="*{price}" th:value="${oldprod.price}" />
+			Price: <input id="price" type="text" th:field="*{price}" th:value="${oldprod.price}" />
 		</p>
 		<br>
 		<p>
-			<input type="submit" value="Submit" role="button" class="buttonV" />
+			<input id="add" type="submit" value="Submit" role="button" class="buttonV" />
 			<input type="reset" value="Clear All" role="button" class="buttonY" />
 		</p>
 	</form>

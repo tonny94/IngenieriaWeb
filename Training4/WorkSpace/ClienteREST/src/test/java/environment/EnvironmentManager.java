@@ -6,13 +6,13 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 
 public class EnvironmentManager {
 	public static void initChromeWebDriver() {
-        System.setProperty("webdriver.chrome.driver", "/home/jpau/university/wecc/springboot-test-selenium/chromedriver");
+        System.setProperty("webdriver.chrome.driver", "/home/pablo/Documents/workspace-sts-3.9.6.RELEASE/ClienteREST/chromedriver");
         WebDriver driver = new ChromeDriver();
         RunEnvironment.setWebDriver(driver);
     }
 
     public static void initFirefoxWebDriver() {
-        System.setProperty("webdriver.chrome.driver", "/home/jpau/university/wecc/springboot-test-selenium/geckodriver");
+        System.setProperty("webdriver.chrome.driver", "/home/pablo/Documents/workspace-sts-3.9.6.RELEASE/ClienteREST/geckodriver");
         WebDriver driver = new FirefoxDriver();
         RunEnvironment.setWebDriver(driver);
     }
