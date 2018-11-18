@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.sever.demo.model.ProductException;
 import com.sever.demo.model.ProductModel;
 import com.sever.demo.repository.ProductRepository;
 
@@ -37,12 +38,12 @@ public class ProductController {
 	 */
 	@GetMapping("/list")
 	@ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<ProductModel>> listAllProducts() {
+    public ResponseEntity<List<ProductModel>> listAllProducts(){
 		List<ProductModel>  productos = new ArrayList<>();
 		productos = productRepository.findAll();
 		if (productos.isEmpty()) {
 			return new ResponseEntity<List<ProductModel>>(productos,HttpStatus.NO_CONTENT);
-        }else {
+		}else {
         	return new ResponseEntity<List<ProductModel>>(productos, HttpStatus.OK);
         }
     }
@@ -52,13 +53,14 @@ public class ProductController {
 	 * @param product
 	 * @param ucBuilder
 	 * @return
+	 * @throws ProductException 
 	 */
 	@PostMapping("/add")
 	@ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> addProduct(@RequestBody ProductModel product, UriComponentsBuilder ucBuilder) {
+    public ResponseEntity<?> addProduct(@RequestBody ProductModel product, UriComponentsBuilder ucBuilder) throws ProductException {
        
 		if(productRepository.findByCode(product.getCode()) != null) {
-            return new ResponseEntity<String>("",HttpStatus.CONFLICT);
+            throw new ProductException(1,"El producto ya existe.");
         }else {
         	productRepository.save(product);
             HttpHeaders headers = new HttpHeaders();
@@ -72,12 +74,14 @@ public class ProductController {
 	 * Elimina un producto de la base de datos
 	 * @param id
 	 * @return
+	 * @throws ProductException 
 	 */
 	@RequestMapping(value = "/remove/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> deleteProduct(@PathVariable("id") String id) {
+    public ResponseEntity<?> deleteProduct(@PathVariable("id") String id) throws ProductException {
+		
 		ProductModel product = productRepository.deleteByCode(id);
 		if (product == null) {
-            return new ResponseEntity<ProductModel>(HttpStatus.NOT_FOUND);
+			throw new ProductException(2,"El producto no existe.");
         }else {
         	return new ResponseEntity<ProductModel>(HttpStatus.NO_CONTENT);
         }
@@ -87,13 +91,14 @@ public class ProductController {
 	 * Muestra un producto
 	 * @param id
 	 * @return
+	 * @throws ProductException 
 	 */
 	@RequestMapping(value = "/show/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> getProduct(@PathVariable("id") String id) {
+    public ResponseEntity<?> getProduct(@PathVariable("id") String id) throws ProductException {
 		
 		ProductModel product = productRepository.findByCode(id);
         if (product == null) {
-        	return new ResponseEntity<ProductModel>(HttpStatus.CONFLICT);
+        	throw new ProductException(2,"El producto no existe.");
         }else {
         	return new ResponseEntity<ProductModel>(product, HttpStatus.OK);
         }
@@ -104,14 +109,15 @@ public class ProductController {
 	 * @param product
 	 * @param ucBuilder
 	 * @return
+	 * @throws ProductException 
 	 */
 	@PutMapping("/modify")
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<?> modifyProducts(@RequestBody ProductModel product, UriComponentsBuilder ucBuilder) {
+	public ResponseEntity<?> modifyProducts(@RequestBody ProductModel product, UriComponentsBuilder ucBuilder) throws ProductException {
 		
 		if (productRepository.findByCode(product.getCode()) == null) {
-            return new ResponseEntity<ProductModel>(HttpStatus.NOT_FOUND);
-        }
+			throw new ProductException(2,"El producto no existe.");
+		}
         else{
         	productRepository.delete(productRepository.findByCode(product.getCode()));
         	productRepository.save(product);

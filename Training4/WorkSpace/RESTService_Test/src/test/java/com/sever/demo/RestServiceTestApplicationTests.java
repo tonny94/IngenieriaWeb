@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.sever.demo.controller.ProductController;
+import com.sever.demo.model.ExceptionResponse;
+import com.sever.demo.model.ProductException;
 import com.sever.demo.model.ProductModel;
 import com.sever.demo.repository.ProductRepository;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -39,7 +41,7 @@ public class RestServiceTestApplicationTests {
 	}
 	
 	@Test
-	public void listAllProducts_OK() {
+	public void listAllProducts_OK(){
 		List<ProductModel> listRespuesta = new ArrayList<>();
 		listRespuesta.add(product1);
 		listRespuesta.add(product2);
@@ -55,7 +57,7 @@ public class RestServiceTestApplicationTests {
 	}
 	
 	@Test
-	public void listAllProducts_KO() {
+	public void listAllProducts_Vacio(){
 		List<ProductModel> listRespuesta = new ArrayList<>();
 		
 		ResponseEntity<List<ProductModel>> esperado = new ResponseEntity<List<ProductModel>>(listRespuesta, HttpStatus.NO_CONTENT);
@@ -68,7 +70,7 @@ public class RestServiceTestApplicationTests {
 	}
 	
 	@Test
-	public void addProduct_OK() {
+	public void addProduct_OK() throws ProductException {
 
 		ProductModel nuevoProducto = new ProductModel("C123","platano","1kg de fruta",2);
 		UriComponentsBuilder builderEsperado = UriComponentsBuilder.fromUriString("http://localhost:8080");
@@ -87,21 +89,27 @@ public class RestServiceTestApplicationTests {
 		verify(productRepository,times(1)).save(nuevoProducto);
 	}
 	
-	@Test
-	public void addProduct_KO() {
+	@Test(expected = ProductException.class)
+	public void addProduct_KO() throws ProductException {
 		
 		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8080");
-		ResponseEntity<String> esperado = new ResponseEntity<String>("", HttpStatus.CONFLICT);
+		
+		ExceptionResponse response = new ExceptionResponse();
+		response.setCode(HttpStatus.CONFLICT.value());
+		response.setDescription("El producto ya existe.");
+		ResponseEntity<ExceptionResponse> esperado = new ResponseEntity<ExceptionResponse>(response, HttpStatus.CONFLICT);
+		
 		
 		when(productRepository.findByCode(product1.getCode())).thenReturn(product1);
 		
 		ResponseEntity<?> resultado = productController.addProduct(product1,builder);
 		Assert.assertEquals(esperado, resultado);
 		verify(productRepository,times(1)).findByCode(product1.getCode());
+	
 	}
 	
 	@Test
-	public void deleteProduct_OK() {
+	public void deleteProduct_OK() throws ProductException {
 
 		ResponseEntity<?> esperado = new ResponseEntity<ProductModel>(HttpStatus.NO_CONTENT);
 		when(productRepository.deleteByCode(product1.getCode())).thenReturn(product1);
@@ -113,20 +121,23 @@ public class RestServiceTestApplicationTests {
 		
 	}
 	
-	@Test
-	public void deleteProduct_KO() {
+	@Test(expected = ProductException.class)
+	public void deleteProduct_KO() throws ProductException {
 		
-		ResponseEntity<ProductModel> esperado = new ResponseEntity<ProductModel>(HttpStatus.NOT_FOUND);
+		ExceptionResponse response = new ExceptionResponse();
+		response.setCode(HttpStatus.CONFLICT.value());
+		response.setDescription("El producto no existe.");
+		ResponseEntity<ExceptionResponse> esperado = new ResponseEntity<ExceptionResponse>(response, HttpStatus.NOT_FOUND);
+		
 		when(productRepository.deleteByCode("D12")).thenReturn(null);
 		
 		ResponseEntity<?> resultado = productController.deleteProduct("D12");
 		Assert.assertEquals(esperado, resultado);
-		
 		verify(productRepository,times(1)).deleteByCode("D12");
 	}
 	
 	@Test
-	public void getProduct_OK() {
+	public void getProduct_OK() throws ProductException {
 		
 		ResponseEntity<?> esperado = new ResponseEntity<ProductModel>(product1, HttpStatus.OK);
 		when(productRepository.findByCode("A12")).thenReturn(product1);
@@ -137,12 +148,15 @@ public class RestServiceTestApplicationTests {
 		verify(productRepository,times(1)).findByCode("A12");
 	}
 	
-	@Test
-	public void getProduct_KO() {
+	@Test(expected = ProductException.class)
+	public void getProduct_KO() throws ProductException {
 		
-		ProductModel product = null;
-		ResponseEntity<?> esperado = new ResponseEntity<ProductModel>(HttpStatus.CONFLICT);
-		when(productRepository.findByCode("D12")).thenReturn(product);
+		ExceptionResponse response = new ExceptionResponse();
+		response.setCode(HttpStatus.CONFLICT.value());
+		response.setDescription("El producto no existe.");
+		ResponseEntity<ExceptionResponse> esperado = new ResponseEntity<ExceptionResponse>(response, HttpStatus.NOT_FOUND);
+		
+		when(productRepository.findByCode("D12")).thenReturn(null);
 		
 		ResponseEntity<?> resultado = productController.getProduct("D12");
 		Assert.assertEquals(esperado, resultado);
@@ -151,7 +165,7 @@ public class RestServiceTestApplicationTests {
 	}
 	
 	@Test
-	public void modifyProduct_OK() {
+	public void modifyProduct_OK() throws ProductException {
 		
 		ProductModel nuevoProducto = new ProductModel("A12","platano","4kg de fruta",4);
 		UriComponentsBuilder builderEsperado = UriComponentsBuilder.fromUriString("http://localhost:8080");
@@ -169,11 +183,16 @@ public class RestServiceTestApplicationTests {
 		
 	}
 	
-	@Test
-	public void modifyProduct_KO() {
-		ProductModel nuevoProducto = new ProductModel("D12","platano","4kg de fruta",4);
-		ResponseEntity<?> esperado = new ResponseEntity<ProductModel>(HttpStatus.NOT_FOUND);
+	@Test(expected = ProductException.class)
+	public void modifyProduct_KO() throws ProductException {
 		
+		ProductModel nuevoProducto = new ProductModel("D12","platano","4kg de fruta",4);
+		
+		ExceptionResponse response = new ExceptionResponse();
+		response.setCode(HttpStatus.CONFLICT.value());
+		response.setDescription("El producto no existe.");
+		ResponseEntity<ExceptionResponse> esperado = new ResponseEntity<ExceptionResponse>(response, HttpStatus.NOT_FOUND);
+
 		when(productRepository.findByCode(nuevoProducto.getCode())).thenReturn(null);
 		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8080");
 		ResponseEntity<?> resultado = productController.modifyProducts(nuevoProducto,builder);
